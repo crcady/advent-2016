@@ -59,12 +59,11 @@ impl EncryptedRoom {
         let mut freqs: HashMap<char, i32> = HashMap::new();
         let mut letters: Vec<char> = Vec::with_capacity(26);
         for i in 0u32..26 {
-            letters.push(char::from_u32('a' as u32 + i).unwrap());
+            letters.push(shift(&'a', i));
         }
 
         for c in self.name.concat().chars() {
-            let old_freq = freqs.get(&c).unwrap_or(&0);
-            freqs.insert(c, old_freq + 1);
+            freqs.insert(c, freqs.get(&c).unwrap_or(&0) + 1);
         }
 
         letters.sort_by_key(|k| -freqs.get(k).unwrap_or(&0));
