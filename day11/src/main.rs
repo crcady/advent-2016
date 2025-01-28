@@ -113,6 +113,9 @@ impl<'a> GameState<'a> {
                         }
                     }
                 }
+                for i in 0..4 {
+                    new_floors[i].sort();
+                }
                 let candidate = GameState {
                     elevator: self.elevator - 1,
                     floors: new_floors,
@@ -132,6 +135,9 @@ impl<'a> GameState<'a> {
                             new_floors[f].push(self.floors[f][j]);
                         }
                     }
+                }
+                for i in 0..4 {
+                    new_floors[i].sort();
                 }
                 let candidate = GameState {
                     elevator: self.elevator + 1,
@@ -155,6 +161,9 @@ impl<'a> GameState<'a> {
                             }
                         }
                     }
+                    for i in 0..4 {
+                        new_floors[i].sort();
+                    }
                     let candidate = GameState {
                         elevator: self.elevator - 1,
                         floors: new_floors,
@@ -174,6 +183,9 @@ impl<'a> GameState<'a> {
                                 new_floors[f].push(self.floors[f][j]);
                             }
                         }
+                    }
+                    for i in 0..4 {
+                        new_floors[i].sort();
                     }
                     let candidate = GameState {
                         elevator: self.elevator + 1,
