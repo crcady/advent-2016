@@ -1,36 +1,53 @@
 use std::collections::HashSet;
 
 fn main() {
-    let hg = String::from("HG");
-    let hm = String::from("HM");
-    let lg = String::from("LG");
-    let lm = String::from("LM");
+    let promethium_generator = String::from("AG");
+    let promethium_microchip = String::from("AM");
+
+    let cobalt_generator = String::from("BG");
+    let cobalt_microchip= String::from("BM");
+
+    let curium_generator = String::from("CG");
+    let curium_microchip = String::from("CM");
+
+    let ruthemium_generator = String::from("DG");
+    let ruthenium_micrichip = String::from("DM");
+
+    let plutonium_generator = String::from("EG");
+    let plutonium_microchip = String::from("EM");
+
 
     let gs = GameState {
         elevator: 0,
         floors: [
-            vec![&hm, &lm],
-            vec![&hg],
-            vec![&lg],
+            vec![promethium_generator, promethium_microchip],
+            vec![cobalt_generator, curium_generator, ruthemium_generator, plutonium_generator],
+            vec![cobalt_microchip, curium_microchip, ruthenium_micrichip, plutonium_microchip],
             vec![],
         ]
     };
 
-    let mut frontier: Vec<GameState> = Vec::new();
-    frontier.push(gs);
+    let mut frontier: HashSet<GameState> = HashSet::new();
+    frontier.insert(gs);
 
     let mut generations = 0;
 
+    let mut seen_states: HashSet<GameState> = HashSet::new();
+
     'outer: loop {
+        println!("Generation {} has {} candidates", generations, frontier.len());
         generations += 1;
-        let mut new_frontier: Vec<GameState> = Vec::new();
-        for current in frontier.iter() {
+        let mut new_frontier: HashSet<GameState> = HashSet::new();
+        for current in frontier {
             for new_state in current.generate_moves() {
                 if new_state.won() {
                     break 'outer;
                 }
-                new_frontier.push(new_state);
+                if !seen_states.contains(&new_state) {
+                    new_frontier.insert(new_state);
+                }
             }
+            seen_states.insert(current);
         }
 
         frontier = new_frontier;
@@ -38,13 +55,13 @@ fn main() {
 
     println!("Found a good solution in generation {}", generations);
 }
-#[derive(Debug)]
-struct GameState<'a> {
+#[derive(Debug, Eq, Hash, PartialEq)]
+struct GameState {
     elevator: usize,
-    floors: [Vec<&'a String>; 4],
+    floors: [Vec<String>; 4],
 }
 
-impl<'a> GameState<'a> {
+impl GameState {
     fn check(&self) -> bool {
         // Checks to see if this configuration causes annihilation.
         // A true value means that it's a good configuration
@@ -86,13 +103,13 @@ impl<'a> GameState<'a> {
         let mut res: Vec<GameState> = Vec::new();
         for item1 in 0..self.floors[self.elevator].len() {
             if self.elevator > 0 {
-                let mut new_floors: [Vec<&String>; 4] = [vec![], vec![], vec![], vec![]];
+                let mut new_floors: [Vec<String>; 4] = [vec![], vec![], vec![], vec![]];
                 for f in 0..4 {
                     for j in 0..self.floors[f].len() {
                         if f == self.elevator && item1 == j{
-                            new_floors[f-1].push(self.floors[f][j]);
+                            new_floors[f-1].push(self.floors[f][j].clone());
                         } else {
-                            new_floors[f].push(self.floors[f][j]);
+                            new_floors[f].push(self.floors[f][j].clone());
                         }
                     }
                 }
@@ -106,13 +123,13 @@ impl<'a> GameState<'a> {
             }
 
             if self.elevator < 3 {
-                let mut new_floors: [Vec<&String>; 4] = [vec![], vec![], vec![], vec![]];
+                let mut new_floors: [Vec<String>; 4] = [vec![], vec![], vec![], vec![]];
                 for f in 0..4 {
                     for j in 0..self.floors[f].len() {
                         if f == self.elevator && item1 == j{
-                            new_floors[f+1].push(self.floors[f][j]);
+                            new_floors[f+1].push(self.floors[f][j].clone());
                         } else {
-                            new_floors[f].push(self.floors[f][j]);
+                            new_floors[f].push(self.floors[f][j].clone());
                         }
                     }
                 }
@@ -128,13 +145,13 @@ impl<'a> GameState<'a> {
             for item2 in item1+1..self.floors[self.elevator].len() {
 
                 if self.elevator > 0 {
-                    let mut new_floors: [Vec<&String>; 4] = [vec![], vec![], vec![], vec![]];
+                    let mut new_floors: [Vec<String>; 4] = [vec![], vec![], vec![], vec![]];
                     for f in 0..4 {
                         for j in 0..self.floors[f].len() {
                             if f == self.elevator && (item1 == j || item2 == j) {
-                                new_floors[f-1].push(self.floors[f][j]);
+                                new_floors[f-1].push(self.floors[f][j].clone());
                             } else {
-                                new_floors[f].push(self.floors[f][j]);
+                                new_floors[f].push(self.floors[f][j].clone());
                             }
                         }
                     }
@@ -148,13 +165,13 @@ impl<'a> GameState<'a> {
                 }
 
                 if self.elevator < 3 {
-                    let mut new_floors: [Vec<&String>; 4] = [vec![], vec![], vec![], vec![]];
+                    let mut new_floors: [Vec<String>; 4] = [vec![], vec![], vec![], vec![]];
                     for f in 0..4 {
                         for j in 0..self.floors[f].len() {
                             if f == self.elevator && (item1 == j || item2 == j) {
-                                new_floors[f+1].push(self.floors[f][j]);
+                                new_floors[f+1].push(self.floors[f][j].clone());
                             } else {
-                                new_floors[f].push(self.floors[f][j]);
+                                new_floors[f].push(self.floors[f][j].clone());
                             }
                         }
                     }
@@ -173,7 +190,7 @@ impl<'a> GameState<'a> {
     }
 
     fn won(&self) -> bool {
-        for i in 0..2 {
+        for i in 0..3 {
             if self.floors[i].len() > 0 {
                 return false
             }
@@ -190,14 +207,14 @@ fn check_check() {
 
     let gs = GameState {
         elevator: 0,
-        floors: [vec![&hg, &hm], vec![&lg], vec![], vec![]],
+        floors: [vec![hg.clone(), hm.clone()], vec![lg.clone()], vec![], vec![]],
     };
 
     assert_eq!(gs.check(), true);
 
     let gs = GameState {
         elevator: 0,
-        floors: [vec![&hm, &lg], vec![&hg], vec![], vec![]],
+        floors: [vec![hm, lg], vec![hg], vec![], vec![]],
     };
 
     assert_eq!(gs.check(), false);
@@ -211,7 +228,7 @@ fn check_moves() {
 
     let gs = GameState {
         elevator: 0,
-        floors: [vec![&hg, &lg, &hm], vec![], vec![], vec![]],
+        floors: [vec![hg, lg, hm], vec![], vec![], vec![]],
     };
 
     let moves = gs.generate_moves();
