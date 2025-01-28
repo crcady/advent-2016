@@ -16,11 +16,17 @@ fn main() {
     let plutonium_generator = String::from("EG");
     let plutonium_microchip = String::from("EM");
 
+    let elerium_generator = String::from("FG");
+    let elerium_microchip = String::from("FM");
+
+    let dilithium_generator = String::from("GG");
+    let dilithium_microchip = String::from("GM");
+
 
     let gs = GameState {
         elevator: 0,
         floors: [
-            vec![&promethium_generator, &promethium_microchip],
+            vec![&promethium_generator, &promethium_microchip, &elerium_generator, &elerium_microchip, &dilithium_generator, &dilithium_microchip],
             vec![&cobalt_generator, &curium_generator, &ruthemium_generator, &plutonium_generator],
             vec![&cobalt_microchip, &curium_microchip, &ruthenium_micrichip, &plutonium_microchip],
             vec![],
